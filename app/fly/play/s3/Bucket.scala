@@ -27,22 +27,12 @@ case class Bucket(
 
   /**
    * Creates an authenticated url for an item with the given name
-	* and the given method.
-   *
-   * @param itemName	The item for which the url should be created
-   * @param method	The verb for which the url should be created
-   * @param expires		The expiration in seconds from now
-   */
-  def url(itemName: String, method: String, expires: Long): String =
-    s3.url(itemName, method, ((new Date).getTime / 1000) + expires)
-  /**
-   * Creates an authenticated url for an item with the given name
    *
    * @param itemName	The item for which the url should be created
    * @param expires		The expiration in seconds from now
    */
-  def url(itemName: String, expires: Long): String =
-    url(itemName, "GET", expires)
+  def url(itemName: String, expires: Long, method: String = "GET", contentMD5: String = "", contentType: String = ""): String =
+    url(itemName, expires, method, contentMD5, contentType)
 
 
 

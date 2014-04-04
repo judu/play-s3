@@ -40,16 +40,10 @@ object S3 {
     fromConfig.getBucket(bucketName, delimiter)
 
   /**
-   * Utility method to create an url
-   */
-  def url(bucketName: String, path: String, expires: Long)(implicit credentials: AwsCredentials): String =
-    url(bucketName, path, "GET", expires)
-
-  /**
    * Utility method to create an url with given method
    */
-  def url(bucketName: String, path: String, method: String, expires: Long)(implicit credentials: AwsCredentials): String =
-    fromConfig.url(bucketName, path, method, expires)
+  def url(bucketName: String, path: String, expires: Long, method: String = "GET", contentMD5: String = "", contentType: String = "")(implicit credentials: AwsCredentials): String =
+    fromConfig.url(bucketName, path, expires, method, contentMD5, contentType)
 }
 
 class S3(val https: Boolean, val host: String)(implicit val credentials: AwsCredentials) {
@@ -159,22 +153,10 @@ class S3(val https: Boolean, val host: String)(implicit val credentials: AwsCred
    *
    * @see Bucket.url
    */
-  def url(bucketName: String, path: String, expires: Long): String =
-    url(bucketName, path, "GET", expires)
-
-  /**
-   * Lowlevel method to create an authenticated url to a specific file
-   *
-   * @param bucketName	The name of the bucket
-   * @param path		The path of the file you want to delete
-   * @param expires		Time in seconds since epoch
-   *
-   * @see Bucket.url
-   */
-  def url(bucketName: String, path: String, method: String, expires: Long): String = {
+  def url(bucketName: String, path: String, expires: Long, method: String = "GET", contentMD5: String = "", contentType: String = ""): String = {
     val expireString = expires.toString
 
-    val cannonicalRequest = method + "\n\n\n" + expireString + "\n/" + bucketName + "/" + path
+    val cannonicalRequest = method + "\n" + contentMD5 + "\n" + contentType + "\n" + expireString + "\n/" + bucketName + "/" + path
     val signature = s3Signer.createSignature(cannonicalRequest)
 
     httpUrl(bucketName, path) +
