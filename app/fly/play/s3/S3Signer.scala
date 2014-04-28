@@ -55,14 +55,14 @@ case class S3Signer(credentials: AwsCredentials, s3Host: String) extends Signer 
 
     //we need to extract the bucket name from the host and use it in the resource path
     val escapedS3Host = s3Host.replace(".", raw"\.")
-    val BucketNameRegex = s"((.*)\\.)?$escapedS3Host".r
+    val BucketNameRegex = s"(.*)?\\.$escapedS3Host".r
     val bucketName =
-      Option(uri.getHost match {
-        case BucketNameRegex(beg, name) => name
-        case x => throw new Exception("Could not extract the bucket name from " + x)
-      }).getOrElse("")
+      uri.getHost match {
+        case BucketNameRegex(name) => Some(name)
+        case x => None
+      }
 
-    val resourcePath = "/" + bucketName + path.getOrElse("")
+    val resourcePath = bucketName.map(b => "/" + b).getOrElse("") + path.getOrElse("")
 
     val canonicalRequest = createCanonicalRequest(method, contentMd5, contentType, dateTime, newHeaders, resourcePath, request.queryString)
 
