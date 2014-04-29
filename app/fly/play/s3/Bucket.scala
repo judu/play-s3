@@ -32,7 +32,7 @@ case class Bucket(
    * @param expires		The expiration in seconds from now
    */
   def url(itemName: String, expires: Long, method: String = "GET", contentMD5: String = "", contentType: String = ""): String =
-    s3.url(name, itemName, expires, method, contentMD5, contentType)
+    s3.url(name, itemName, ((new Date).getTime / 1000) + expires, method, contentMD5, contentType)
 
 
 

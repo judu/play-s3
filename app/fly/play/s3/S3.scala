@@ -41,9 +41,10 @@ object S3 {
 
   /**
    * Utility method to create an url with given method
+	* @param expires: time in second from epoch
    */
   def url(bucketName: String, path: String, expires: Long, method: String = "GET", contentMD5: String = "", contentType: String = "")(implicit credentials: AwsCredentials): String =
-    fromConfig.url(bucketName, path, expires, method, contentMD5, contentType)
+	  fromConfig.url(bucketName, path, expires, method, contentMD5, contentType)
 }
 
 class S3(val https: Boolean, val host: String)(implicit val credentials: AwsCredentials) {
